@@ -16,7 +16,14 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git branch:*)",
-      "Bash(git remote:*)"
+      "Bash(git remote:*)",
+      "Bash(mkdir -p /tmp/cts-extract)",
+      "Bash(tar -xzf /c/Users/moham/Downloads/CTS/claude-team-skills-final.tar.gz -C /tmp/cts-extract)",
+      "Bash(mkdir -p /tmp/cts2)",
+      "Bash(tar -xzf claude-team-skills-final.tar.gz -C /tmp/cts2)",
+      "Bash(tar -xzf claude-team-skills-final.tar.gz -C claude-team-skills-final)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)"
     ]
   }
 }
