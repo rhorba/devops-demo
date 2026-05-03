@@ -2,7 +2,7 @@
 
 **19 AI Specialists Working as One Team — Built for Claude Code**
 
-> Version 1.0 · Zero dependencies · Token-efficient · YAGNI-driven
+> Version 1.0 · Zero dependencies · Token-efficient · YAGNI-driven · [MIT License](LICENSE)
 
 Claude Team Skills is a collection of 19 interconnected specialist skills for Claude Code. Instead of a generic AI assistant, every task is handled by the right expert — PM, Security Engineer, DBA, Test Architect, and more — all routed by a central Orchestrator that loads one specialist at a time.
 
