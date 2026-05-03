@@ -91,6 +91,314 @@ Switches specialist with a 2-3 line handoff summary
 
 ---
 
+## Full Strict Sequence at a Glance
+
+> These rules are **NON-NEGOTIABLE**. They apply to every session, every task, every specialist. No exceptions.
+
+```
+SESSION START
+     │
+     ▼
+① Read .logs/sessions.md → show last SESSION_END → "Continue or new task?"
+     │
+     ▼
+══════════════════════════════════════════════
+ PHASE 1 — UNDERSTAND          [log: communications.md]
+══════════════════════════════════════════════
+     │  Clarify: what, where, how big, who is affected
+     │  Ask up to 3 focused questions — no assumptions
+     │  Log: [UNDERSTAND] entry
+     ▼
+══════════════════════════════════════════════
+ PHASE 2 — BRAINSTORM          [log: decisions.md]
+══════════════════════════════════════════════
+     │  Present exactly 3 options:
+     │    🟢 SIMPLE        lowest effort / fastest
+     │    🟡 BALANCED      moderate effort / good tradeoffs
+     │    🔴 COMPREHENSIVE highest effort / most robust
+     │  Log: [BRAINSTORM] entry
+     │
+     ▼
+  ⛔ GATE: USER MUST PICK an option before continuing
+     (never self-proceed — wait for explicit choice)
+     │
+     ▼
+══════════════════════════════════════════════
+ PHASE 3 — PLAN                [log: activity.md]
+══════════════════════════════════════════════
+     │  Break into 30-60 min task batches
+     │  List tasks numbered, with estimated time
+     │  Identify which specialists are needed
+     │  Log: [PLAN] entry
+     │
+     ▼
+  ⛔ GATE: USER MUST CONFIRM plan before EXECUTE starts
+     │
+     ▼
+══════════════════════════════════════════════
+ PHASE 4 — EXECUTE             [log: activity.md]
+══════════════════════════════════════════════
+     │  One task at a time
+     │  Before each task: "Here's what I'm about to do: [1-2 lines]"
+     │  After each task: show result → "Good? Next, or adjust?"
+     │  Load ONE specialist per task (never all at once)
+     │  HANDOFF note required on every specialist switch
+     │  Checkpoint after each 30-60 min batch
+     │  Log: [TASK COMPLETE] entry per task
+     ▼
+══════════════════════════════════════════════
+ PHASE 5 — VERIFY              [log: issues.md]
+══════════════════════════════════════════════
+     │  Run tests (unit + integration + e2e as applicable)
+     │  Run security review (OWASP checklist minimum)
+     │  Fix any CRITICAL/HIGH issues before proceeding
+     │  Log: [VERIFY] entry with pass/fail summary
+     │
+     ▼
+  ⛔ GATE: VERIFY MUST PASS before SHIP
+     (no exceptions — not even user "ship it" shortcut)
+     │
+     ▼
+══════════════════════════════════════════════
+ PHASE 6 — SHIP                [log: activity.md]
+══════════════════════════════════════════════
+     │  Deploy / commit / release
+     │  Update documentation
+     │  Log: [SHIP] milestone entry
+     ▼
+SESSION END
+     │
+     ▼
+Write SESSION_END to .logs/sessions.md:
+  - Completed: [list]
+  - In progress: [list]
+  - Blocked: [list]
+  - Next: [planned next steps]
+```
+
+### Strict Rules Summary
+
+| Rule | Detail |
+|---|---|
+| **All 6 phases mandatory** | Every phase must be acknowledged and logged — even if brief |
+| **No silent phase skips** | If user says "skip this" → acknowledge in one sentence, log it, continue |
+| **2 hard gates** | BRAINSTORM → PLAN requires user option pick; PLAN → EXECUTE requires user confirmation |
+| **1 ship gate** | VERIFY must pass (tests + security) before SHIP — no exceptions |
+| **One specialist at a time** | Never load all 19 skills — Orchestrator + 1 specialist per task |
+| **Written handoffs** | Every specialist switch gets a 2-3 line HANDOFF note |
+| **Confirm before code** | Present approach, get approval, then generate — prevents rewrites |
+| **Log in same tool call** | Log after action, in the same call — no extra round-trips |
+| **YAGNI gate** | Before building anything: "Is this needed RIGHT NOW?" Default to 🟢 SIMPLE |
+
+---
+
+## CTS Session Playbook
+
+A step-by-step reference for running a session strictly. Copy this into any project context to enforce compliance.
+
+### Step 0 — Session Open (always first)
+
+```
+1. Read .logs/sessions.md
+2. Find the last SESSION_END block
+3. Display:
+   📋 Last session:
+   - Completed: [...]
+   - In progress: [...]
+   - Blocked: [...]
+   - Next: [...]
+   "Continue from here, or start something new?"
+4. Wait for user response
+```
+
+If no `.logs/` directory exists → run `bash skills/project-monitor/templates/init-logs.sh` first.
+
+---
+
+### Step 1 — UNDERSTAND
+
+```
+Trigger: any new request
+Specialist: Orchestrator
+
+Actions:
+  □ Identify task type (bug / feature / project / other)
+  □ Ask clarifying questions (max 3) — what, where, scope, constraints
+  □ Confirm understanding with user before moving on
+  □ Log to .logs/communications.md:
+    ### [DATE TIME] [UNDERSTAND] — [Short Title]
+    - Specialist: Orchestrator
+    - Summary: [what was clarified]
+    - Status: complete
+```
+
+---
+
+### Step 2 — BRAINSTORM
+
+```
+Trigger: after UNDERSTAND is logged
+Specialist: Orchestrator (+ relevant domain specialist if needed)
+
+Actions:
+  □ Present exactly 3 options ranked simple → complex:
+      🟢 SIMPLE        [description, ~X min]
+      🟡 BALANCED      [description, ~X min]
+      🔴 COMPREHENSIVE [description, ~X min]
+  □ Wait — do NOT proceed until user picks one
+  □ Log to .logs/decisions.md:
+    ### [DATE TIME] [BRAINSTORM] — [Decision Title]
+    - Options presented: Simple / Balanced / Comprehensive
+    - Selected: [option]
+    - Rationale: [why]
+
+⛔ GATE: no PLAN until user selects an option
+```
+
+---
+
+### Step 3 — PLAN
+
+```
+Trigger: after user picks BRAINSTORM option
+Specialist: Orchestrator + Project Manager (for multi-day work)
+
+Actions:
+  □ Break work into numbered tasks (30-60 min each)
+  □ List specialists needed per task
+  □ Estimate total time
+  □ Present plan to user
+  □ Wait — do NOT execute until user confirms
+  □ Log to .logs/activity.md:
+    ### [DATE TIME] [PLAN] — [Plan Title]
+    - Tasks: [numbered list]
+    - Estimated: [total time]
+    - Status: approved
+
+⛔ GATE: no EXECUTE until user confirms plan
+```
+
+---
+
+### Step 4 — EXECUTE
+
+```
+Trigger: after user approves PLAN
+Specialists: as listed in plan (one at a time)
+
+Per task:
+  □ Announce: "Here's what I'm about to do: [1-2 lines]"
+  □ Execute the task
+  □ Show result briefly
+  □ Ask: "Good? Next, or adjust?"
+  □ Log to .logs/activity.md:
+    ### [DATE TIME] [TASK COMPLETE] — [Task Name]
+    - Specialist: [who]
+    - Summary: [what was done]
+    - Status: complete
+
+Per specialist switch:
+  □ Write HANDOFF note (2-3 lines):
+    HANDOFF → [next specialist]
+    Context: [what was done]
+    Next: [what they need to do]
+    Decision: [relevant option selected]
+
+Per batch (30-60 min):
+  □ Checkpoint: show batch summary → "Continue to next batch?"
+```
+
+---
+
+### Step 5 — VERIFY
+
+```
+Trigger: after all EXECUTE tasks complete
+Specialists: Tester + Security Engineer (always both)
+
+Actions:
+  □ Run unit tests → log pass/fail count
+  □ Run integration tests (if applicable)
+  □ Run e2e tests (if applicable)
+  □ Security review: OWASP checklist minimum
+  □ For auth/payments/data: run adversarial review checklist
+  □ Fix all CRITICAL and HIGH issues before proceeding
+  □ Log to .logs/issues.md:
+    ### [DATE TIME] [VERIFY] — [Feature/Task Name]
+    - Tests: [X passed / Y failed]
+    - Security: [pass / issues found]
+    - Issues fixed: [list]
+    - Status: pass
+
+⛔ GATE: VERIFY must be status: pass before SHIP
+         User saying "ship it" does NOT bypass this gate
+```
+
+---
+
+### Step 6 — SHIP
+
+```
+Trigger: VERIFY logged as pass
+Specialist: Deployment / DevOps (as needed)
+
+Actions:
+  □ Commit / deploy / release
+  □ Update relevant documentation
+  □ Announce completion to user
+  □ Log to .logs/activity.md:
+    ### [DATE TIME] [SHIP] — [Feature/Task Name]
+    - Specialist: Deployment
+    - Summary: [what was shipped, where]
+    - Status: complete
+    - Impact: [low / medium / high]
+```
+
+---
+
+### Step 7 — Session Close (always last)
+
+```
+Write to .logs/sessions.md:
+### [DATE TIME] SESSION_END
+- Completed: [list of tasks done this session]
+- In progress: [any started but unfinished tasks]
+- Blocked: [any open blockers]
+- Next: [planned next steps]
+- Specialists used: [list]
+- KPIs: tasks completed [N], issues found [N], issues fixed [N]
+```
+
+---
+
+### Handling User Shortcut Requests
+
+| User says | Correct response |
+|---|---|
+| "skip this phase" | Acknowledge phase in one sentence, log it as skipped, continue |
+| "just do it" | Still confirm approach in one line before executing |
+| "ship it" (before VERIFY) | "VERIFY is required first — running tests now" |
+| "move faster" | Compress phases verbally but still log each one |
+| "YAGNI" | Switch to 🟢 SIMPLE option or reduce scope |
+| "simpler" | Switch to 🟢 SIMPLE option |
+| "stop" | Pause, summarize current state, ask what to do next |
+
+---
+
+### Blocker Protocol (any phase)
+
+```
+🚧 BLOCKER: [what's wrong]
+  A) [simple workaround — lowest effort]
+  B) [proper fix — takes longer]
+  C) [skip for now — document as risk]
+Which one?
+```
+
+Log the chosen option to `.logs/issues.md` with status `open` until resolved.
+
+---
+
 ## The 6-Phase Workflow
 
 Every session follows this flow. Phases can be skipped when not needed.
