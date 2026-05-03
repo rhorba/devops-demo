@@ -1,0 +1,142 @@
+kube-prometheus-stack:
+  fullnameOverride: prometheus
+
+  alertmanager:
+    enabled: true
+    config:
+      global:
+        resolve_timeout: 5m
+      route:
+        group_by: ["alertname", "namespace"]
+        group_wait: 10s
+        group_interval: 5m
+        repeat_interval: 12h
+        receiver: "null"
+      receivers:
+        - name: "null"
+
+  prometheus:
+    prometheusSpec:
+      retention: 2h
+      retentionSize: "1GB"
+      scrapeInterval: 15s
+      evaluationInterval: 15s
+
+      # Thanos sidecar for HA + long-term storage → LocalStack S3
+      thanos:
+        image:
+          registry: quay.io
+          repository: thanos/thanos
+          tag: v0.35.1
+        objectStorageConfig:
+          existingSecret:
+            name: thanos-objstore-config
+            key: objstore.yml
+
+      additionalScrapeConfigs:
+        - job_name: "devops-demo-apps"
+          kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                names: [apps, messaging]
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: "true"
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              target_label: app
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: namespace
+
+      resources:
+        requests:
+          cpu: 200m
+          memory: 512Mi
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+
+      podMetadata:
+        labels:
+          app: prometheus
+          component: observability
+
+  grafana:
+    enabled: true
+    admin:
+      existingSecret: grafana-admin
+      userKey: admin-user
+      passwordKey: admin-password
+
+    grafana.ini:
+      server:
+        root_url: http://grafana.demo.local
+
+    ingress:
+      enabled: true
+      ingressClassName: haproxy
+      hosts:
+        - grafana.demo.local
+
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            url: http://prometheus-prometheus:9090
+            isDefault: true
+          - name: Loki
+            type: loki
+            url: http://loki.observability.svc.cluster.local:3100
+          - name: Thanos
+            type: prometheus
+            url: http://thanos-query.observability.svc.cluster.local:9090
+
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: devops-demo
+            orgId: 1
+            folder: "DevOps Demo"
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/devops-demo
+
+    dashboards:
+      devops-demo: {}  # loaded via ConfigMap sidecar
+
+    sidecar:
+      dashboards:
+        enabled: true
+        searchNamespace: observability
+        label: grafana_dashboard
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  prometheusOperator:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi

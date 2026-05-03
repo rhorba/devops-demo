@@ -1,0 +1,38 @@
+image:
+  repository: localhost:5001/enterprise-consumer
+  tag: latest
+  pullPolicy: Always
+
+env:
+  MQ_QMGR: "QM1"
+  MQ_QUEUE: "DEV.QUEUE.1"
+  MQ_CHANNEL: "DEV.APP.SVRCONN"
+  MQ_CONN: "ibm-mq.messaging.svc.cluster.local(1414)"
+  MQ_APP_USER: "app"
+  SQS_QUEUE_URL: "http://localstack.localstack.svc.cluster.local:4566/000000000000/enterprise-events"
+  AWS_ENDPOINT_URL: "http://localstack.localstack.svc.cluster.local:4566"
+  AWS_REGION: "us-east-1"
+  METRICS_ADDR: ":8080"
+
+mqSecret:
+  name: ibm-mq-app-password
+  key: password
+  password: ""  # set via --set mqSecret.password=… or a pre-provisioned Secret
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  readOnlyRootFilesystem: false  # MQ libs need write access to /tmp
+
+podLabels:
+  app: enterprise-consumer
+  version: latest
+  component: apps
