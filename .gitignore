@@ -1,0 +1,29 @@
+# Binaries
+services/*/bin/
+services/*/*.exe
+*.exe
+
+# Go
+*/vendor/
+
+# Secrets / local overrides
+*.local.yaml
+*.local.env
+.env
+secrets/
+
+# Logs
+.logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kind cluster state
+kubeconfig-*.yaml
