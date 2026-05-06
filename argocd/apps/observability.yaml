@@ -6,7 +6,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/devops-demo
+    repoURL: https://github.com/rhorba/CTS
     targetRevision: main
     path: monitoring/prometheus
   destination:
@@ -28,7 +28,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/devops-demo
+    repoURL: https://github.com/rhorba/CTS
     targetRevision: main
     path: monitoring/loki
   destination:

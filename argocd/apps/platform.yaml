@@ -6,7 +6,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/devops-demo
+    repoURL: https://github.com/rhorba/CTS
     targetRevision: main
     path: charts/localstack
   destination:
@@ -27,7 +27,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/devops-demo
+    repoURL: https://github.com/rhorba/CTS
     targetRevision: main
     path: charts/haproxy
   destination:
