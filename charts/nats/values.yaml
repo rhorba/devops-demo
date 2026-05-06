@@ -5,8 +5,6 @@ nats:
       memoryStore:
         enabled: true
         maxSize: 256Mi
-      fileStore:
-        enabled: false
     cluster:
       enabled: false  # single-node for demo
 
