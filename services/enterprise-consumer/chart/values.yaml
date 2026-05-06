@@ -6,8 +6,8 @@ image:
 env:
   MQ_QMGR: "QM1"
   MQ_QUEUE: "DEV.QUEUE.1"
-  MQ_CHANNEL: "DEV.APP.SVRCONN"
-  MQ_CONN: "ibm-mq.messaging.svc.cluster.local(1414)"
+  MQ_HOST: "ibm-mq.messaging.svc.cluster.local"
+  MQ_AMQP_PORT: "5672"
   MQ_APP_USER: "app"
   SQS_QUEUE_URL: "http://localstack.localstack.svc.cluster.local:4566/000000000000/enterprise-events"
   AWS_ENDPOINT_URL: "http://localstack.localstack.svc.cluster.local:4566"
@@ -17,7 +17,7 @@ env:
 mqSecret:
   name: ibm-mq-app-password
   key: password
-  password: ""  # set via --set mqSecret.password=… or a pre-provisioned Secret
+  password: "passw0rd"  # matches ibm-mq chart queueManager.appPassword
 
 resources:
   requests:

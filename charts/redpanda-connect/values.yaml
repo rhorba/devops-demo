@@ -1,6 +1,6 @@
 image:
   repository: redpandadata/connect
-  tag: "4.27.0"
+  tag: "latest"
   pullPolicy: IfNotPresent
 
 # Each pipeline runs as a separate Deployment
