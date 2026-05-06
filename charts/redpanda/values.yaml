@@ -1,6 +1,14 @@
 redpanda:
   statefulset:
     replicas: 1
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 101
+      fsGroup: 101
+    podTemplate:
+      labels:
+        app: redpanda
+        component: messaging
 
   resources:
     cpu:
@@ -44,6 +52,9 @@ redpanda:
   console:
     enabled: false  # console Deployment fails Kyverno (no runAsNonRoot/labels) — not needed for demo
 
+  tuning:
+    tune_aio_events: false  # disable privileged init container (Kyverno blocks privileged pods)
+
   post_install_job:
     enabled: true
 
@@ -54,8 +65,3 @@ redpanda:
       replicationFactor: 1
       config:
         retention.ms: "86400000"  # 24h
-
-  podLabels:
-    app: redpanda
-    version: "24.1.7"
-    component: messaging

@@ -2,10 +2,10 @@ nats:
   config:
     jetstream:
       enabled: true
-      memStorage:
+      memoryStore:
         enabled: true
-        size: 256Mi
-      fileStorage:
+        maxSize: 256Mi
+      fileStore:
         enabled: false
     cluster:
       enabled: false  # single-node for demo
