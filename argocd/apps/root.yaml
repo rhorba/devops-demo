@@ -9,7 +9,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/CTS
+    repoURL: https://github.com/rhorba/devops-demo
     targetRevision: main
     path: argocd/apps
   destination:

@@ -6,7 +6,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/CTS
+    repoURL: https://github.com/rhorba/devops-demo
     targetRevision: main
     path: charts/mosquitto
   destination:
@@ -27,7 +27,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/CTS
+    repoURL: https://github.com/rhorba/devops-demo
     targetRevision: main
     path: charts/nats
   destination:
@@ -48,7 +48,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/CTS
+    repoURL: https://github.com/rhorba/devops-demo
     targetRevision: main
     path: charts/redpanda
   destination:
@@ -69,7 +69,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/CTS
+    repoURL: https://github.com/rhorba/devops-demo
     targetRevision: main
     path: charts/redpanda-connect
   destination:
@@ -90,7 +90,7 @@ metadata:
 spec:
   project: devops-demo
   source:
-    repoURL: https://github.com/rhorba/CTS
+    repoURL: https://github.com/rhorba/devops-demo
     targetRevision: main
     path: charts/ibm-mq
   destination:
