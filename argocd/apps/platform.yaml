@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: localstack
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: charts/localstack
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: localstack
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: haproxy-ingress
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: charts/haproxy
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: platform
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

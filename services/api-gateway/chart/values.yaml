@@ -1,0 +1,33 @@
+image:
+  repository: localhost:5001/api-gateway
+  tag: latest
+  pullPolicy: Always
+
+env:
+  NATS_URL: "nats://nats.messaging.svc.cluster.local:4222"
+  NATS_STREAM: "TELEMETRY"
+  NATS_SUBJECT: "telemetry.>"
+  LISTEN_ADDR: ":8080"
+
+ingress:
+  enabled: true
+  host: api.demo.local
+  ingressClassName: haproxy
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 32Mi
+  limits:
+    cpu: 300m
+    memory: 128Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  readOnlyRootFilesystem: true
+
+podLabels:
+  app: api-gateway
+  version: latest
+  component: apps

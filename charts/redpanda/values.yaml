@@ -1,0 +1,63 @@
+redpanda:
+  statefulset:
+    replicas: 1
+
+  resources:
+    cpu:
+      cores: 1
+    memory:
+      container:
+        max: "2Gi"
+      redpanda:
+        reserveMemory: "256Mi"
+
+  storage:
+    persistentVolume:
+      enabled: true
+      size: 5Gi
+      storageClass: standard
+
+  tls:
+    enabled: false
+
+  auth:
+    sasl:
+      enabled: false
+
+  # Kafka-compatible API on port 9092
+  listeners:
+    kafka:
+      port: 9092
+    admin:
+      port: 9644
+    schemaRegistry:
+      port: 8081
+    http:
+      port: 8082
+
+  config:
+    cluster:
+      auto_create_topics_enabled: true
+      default_topic_partitions: 3
+      default_topic_replication_factor: 1
+
+  console:
+    enabled: true
+    ingress:
+      enabled: false
+
+  post_install_job:
+    enabled: true
+
+  # Pre-create topics
+  topics:
+    - name: raw.telemetry
+      partitions: 3
+      replicationFactor: 1
+      config:
+        retention.ms: "86400000"  # 24h
+
+  podLabels:
+    app: redpanda
+    version: "24.1.7"
+    component: messaging

@@ -1,0 +1,91 @@
+# Default deny-all ingress for each app namespace
+# Explicit allow rules below override this per service
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: apps
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: messaging
+spec:
+  podSelector: {}
+  policyTypes: [Ingress]
+---
+# Allow apps namespace → messaging namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-apps-to-messaging
+  namespace: messaging
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: apps
+  policyTypes: [Ingress]
+---
+# Allow apps namespace → localstack
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-apps-to-localstack
+  namespace: localstack
+spec:
+  podSelector:
+    matchLabels:
+      app: localstack
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: apps
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: messaging
+  policyTypes: [Ingress]
+---
+# Allow Prometheus to scrape all namespaces
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scrape
+  namespace: apps
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: observability
+      ports:
+        - port: 8080
+          protocol: TCP
+  policyTypes: [Ingress]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scrape
+  namespace: messaging
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: observability
+      ports:
+        - port: 8080
+          protocol: TCP
+        - port: 7778
+          protocol: TCP
+  policyTypes: [Ingress]

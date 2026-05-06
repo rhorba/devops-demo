@@ -1,0 +1,32 @@
+haproxy-ingress:
+  controller:
+    image:
+      tag: v0.14.7
+    ingressClass: haproxy
+    service:
+      type: NodePort
+      nodePorts:
+        http: 30080
+        https: 30443
+
+    config:
+      # Global HAProxy tuning
+      timeout-connect: "5s"
+      timeout-client:  "50s"
+      timeout-server:  "50s"
+      maxconn: "10000"
+      nbthread: "2"
+      load-balance: "roundrobin"
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+
+    podLabels:
+      app: haproxy-ingress
+      version: "0.14.7"
+      component: platform

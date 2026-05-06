@@ -1,0 +1,61 @@
+localstack:
+  image:
+    tag: "3.4.0"
+  service:
+    type: ClusterIP
+    edgeService:
+      targetPort: 4566
+  livenessProbe:
+    initialDelaySeconds: 20
+  readinessProbe:
+    initialDelaySeconds: 15
+
+  extraEnvVars:
+    - name: SERVICES
+      value: "s3,sqs,kinesis,secretsmanager"
+    - name: DEBUG
+      value: "0"
+    - name: DATA_DIR
+      value: "/tmp/localstack/data"
+    - name: AWS_DEFAULT_REGION
+      value: "us-east-1"
+    - name: PERSISTENCE
+      value: "0"
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  podLabels:
+    app: localstack
+    version: "3.4.0"
+    component: platform
+
+  # Init script to pre-create AWS resources
+  startupScriptContent: |
+    #!/usr/bin/env bash
+    echo "Waiting for LocalStack..."
+    until awslocal s3 ls 2>/dev/null; do sleep 2; done
+
+    echo "Creating S3 buckets..."
+    awslocal s3 mb s3://telemetry-archive  2>/dev/null || true
+    awslocal s3 mb s3://thanos-metrics     2>/dev/null || true
+
+    echo "Creating SQS queues..."
+    awslocal sqs create-queue --queue-name enterprise-events 2>/dev/null || true
+
+    echo "Creating Kinesis streams..."
+    awslocal kinesis create-stream \
+      --stream-name telemetry-stream \
+      --shard-count 1 2>/dev/null || true
+
+    echo "Creating Secrets Manager secrets..."
+    awslocal secretsmanager create-secret \
+      --name mq-app-password \
+      --secret-string '{"password":"passw0rd"}' 2>/dev/null || true
+
+    echo "LocalStack resources initialized."

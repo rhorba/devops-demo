@@ -1,0 +1,31 @@
+image:
+  repository: localhost:5001/data-sink
+  tag: latest
+  pullPolicy: Always
+
+env:
+  KAFKA_BROKERS: "redpanda.messaging.svc.cluster.local:9092"
+  KAFKA_TOPIC: "raw.telemetry"
+  KAFKA_GROUP: "data-sink"
+  S3_BUCKET: "telemetry-archive"
+  AWS_ENDPOINT_URL: "http://localstack.localstack.svc.cluster.local:4566"
+  AWS_REGION: "us-east-1"
+  METRICS_ADDR: ":8080"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  readOnlyRootFilesystem: true
+
+podLabels:
+  app: data-sink
+  version: latest
+  component: apps

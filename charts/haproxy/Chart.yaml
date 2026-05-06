@@ -1,0 +1,10 @@
+apiVersion: v2
+name: haproxy-ingress
+description: HAProxy — ingress load balancer for the demo cluster
+type: application
+version: 1.0.0
+appVersion: "2.9.7"
+dependencies:
+  - name: haproxy-ingress
+    version: "0.14.7"
+    repository: "https://haproxy-ingress.github.io/charts"

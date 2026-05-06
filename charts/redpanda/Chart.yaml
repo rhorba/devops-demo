@@ -1,0 +1,10 @@
+apiVersion: v2
+name: redpanda-demo
+description: Redpanda — Kafka-compatible event streaming
+type: application
+version: 1.0.0
+appVersion: "24.1.7"
+dependencies:
+  - name: redpanda
+    version: "5.8.14"
+    repository: "https://charts.redpanda.com"

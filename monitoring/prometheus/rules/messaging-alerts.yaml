@@ -1,0 +1,55 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: messaging-alerts
+  namespace: observability
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: messaging
+      rules:
+        - alert: SensorPublishErrorsHigh
+          expr: rate(sensor_publish_errors_total[5m]) > 0.1
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "MQTT publish errors > 10% for {{ $labels.zone }}"
+            description: "Check Mosquitto connectivity from sensor-simulator"
+
+        - alert: MQConsumerDown
+          expr: absent(enterprise_mq_messages_consumed_total)
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "IBM MQ consumer is not running"
+            description: "enterprise-consumer has produced no metrics for 5 minutes"
+
+        - alert: KafkaConsumerLagHigh
+          expr: datasink_kafka_consumer_lag > 1000
+          for: 3m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Kafka consumer lag > 1000 offsets"
+            description: "data-sink is falling behind on raw.telemetry consumption"
+
+        - alert: S3WritesErrored
+          expr: rate(datasink_s3_errors_total[5m]) > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "S3 write errors detected"
+            description: "data-sink cannot write to LocalStack S3 bucket"
+
+        - alert: PodRestartLoop
+          expr: rate(kube_pod_container_status_restarts_total{namespace=~"apps|messaging"}[15m]) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod {{ $labels.pod }} restarting frequently"
+            description: "Container {{ $labels.container }} in {{ $labels.namespace }} is in a restart loop"

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: localstack-demo
+description: LocalStack — AWS services emulation (S3, SQS, Kinesis, Secrets Manager)
+type: application
+version: 1.0.0
+appVersion: "3.4.0"
+dependencies:
+  - name: localstack
+    version: "0.6.14"
+    repository: "https://localstack.github.io/helm-charts"

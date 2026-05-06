@@ -1,0 +1,36 @@
+image:
+  repository: eclipse-mosquitto
+  tag: "2.0.18"
+  pullPolicy: IfNotPresent
+
+service:
+  mqttPort: 1883
+  websocketPort: 9001
+
+config: |
+  listener 1883
+  listener 9001
+  protocol websockets
+  allow_anonymous true
+  log_type all
+  log_dest stdout
+  persistence false
+  max_keepalive 60
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1883
+  readOnlyRootFilesystem: true
+
+podLabels:
+  app: mosquitto
+  version: "2.0.18"
+  component: messaging

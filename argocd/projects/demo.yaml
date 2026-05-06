@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: devops-demo
+  namespace: platform
+spec:
+  description: "DXC Germany — Senior DevOps Demo Project"
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: messaging
+      server: https://kubernetes.default.svc
+    - namespace: apps
+      server: https://kubernetes.default.svc
+    - namespace: observability
+      server: https://kubernetes.default.svc
+    - namespace: localstack
+      server: https://kubernetes.default.svc
+    - namespace: platform
+      server: https://kubernetes.default.svc
+    - namespace: security
+      server: https://kubernetes.default.svc
+    - namespace: tools
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+    - group: kyverno.io
+      kind: ClusterPolicy
+    - group: networking.k8s.io
+      kind: IngressClass
+    - group: cert-manager.io
+      kind: ClusterIssuer
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  roles:
+    - name: admin
+      policies:
+        - p, proj:devops-demo:admin, applications, *, devops-demo/*, allow

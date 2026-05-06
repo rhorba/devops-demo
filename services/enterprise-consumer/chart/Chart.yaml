@@ -1,0 +1,6 @@
+apiVersion: v2
+name: enterprise-consumer
+description: IBM MQ consumer — bridges enterprise queue to LocalStack SQS
+type: application
+version: 1.0.0
+appVersion: "latest"

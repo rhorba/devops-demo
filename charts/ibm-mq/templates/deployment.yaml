@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ibm-mq
+  namespace: {{ .Release.Namespace }}
+  labels: {{ toYaml .Values.podLabels | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ibm-mq
+  template:
+    metadata:
+      labels: {{ toYaml .Values.podLabels | nindent 8 }}
+    spec:
+      securityContext:
+        runAsUser: {{ .Values.securityContext.runAsUser }}
+        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot }}
+      containers:
+        - name: ibm-mq
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: LICENSE
+              value: accept
+            - name: MQ_QMGR_NAME
+              value: {{ .Values.queueManager.name }}
+            - name: MQ_APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ibm-mq-secret
+                  key: app-password
+            - name: MQ_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ibm-mq-secret
+                  key: admin-password
+            - name: MQ_ENABLE_EMBEDDED_WEB_SERVER
+              value: "1"
+          ports:
+            - name: mq
+              containerPort: {{ .Values.service.mqPort }}
+            - name: https
+              containerPort: {{ .Values.service.httpPort }}
+            - name: amqp
+              containerPort: {{ .Values.service.amqpPort }}
+          volumeMounts:
+            - name: data
+              mountPath: /mnt/mqm
+            - name: mqsc-config
+              mountPath: /etc/mqm/99-amqp.mqsc
+              subPath: 99-amqp.mqsc
+          resources: {{ toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command: ["dspmq", "-m", "{{ .Values.queueManager.name }}"]
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            exec:
+              command: ["dspmq", "-m", "{{ .Values.queueManager.name }}"]
+            initialDelaySeconds: 30
+            periodSeconds: 15
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: mqsc-config
+          configMap:
+            name: ibm-mq-mqsc
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ibm-mq-mqsc
+  namespace: {{ .Release.Namespace }}
+data:
+  99-amqp.mqsc: |
+    DEFINE CHANNEL(SYSTEM.DEF.AMQP) CHLTYPE(AMQP) REPLACE
+    START CHANNEL(SYSTEM.DEF.AMQP)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ibm-mq-secret
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+stringData:
+  app-password: {{ .Values.queueManager.appPassword | quote }}
+  admin-password: {{ .Values.queueManager.appPassword | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ibm-mq
+  namespace: {{ .Release.Namespace }}
+  labels: {{ toYaml .Values.podLabels | nindent 4 }}
+spec:
+  selector:
+    app: ibm-mq
+  ports:
+    - name: mq
+      port: {{ .Values.service.mqPort }}
+      targetPort: mq
+    - name: https
+      port: {{ .Values.service.httpPort }}
+      targetPort: https
+    - name: amqp
+      port: {{ .Values.service.amqpPort }}
+      targetPort: amqp

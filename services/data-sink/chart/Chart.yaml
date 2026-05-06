@@ -1,0 +1,6 @@
+apiVersion: v2
+name: data-sink
+description: Kafka consumer — archives telemetry to LocalStack S3
+type: application
+version: 1.0.0
+appVersion: "latest"

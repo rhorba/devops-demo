@@ -1,0 +1,33 @@
+image:
+  repository: icr.io/ibm-messaging/mq
+  tag: latest
+  pullPolicy: IfNotPresent
+
+queueManager:
+  name: QM1
+  appPassword: "passw0rd"   # Override via secret in production
+
+service:
+  mqPort: 1414
+  httpPort: 9443
+  amqpPort: 5672
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+persistence:
+  enabled: false  # emptyDir for demo
+
+podLabels:
+  app: ibm-mq
+  version: "9.3.5"
+  component: messaging
+
+securityContext:
+  runAsUser: 888   # mqm user in IBM MQ image — must not be 0
+  runAsNonRoot: true

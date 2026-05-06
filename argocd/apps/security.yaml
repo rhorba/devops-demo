@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kyverno-policies
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: security/kyverno-policies
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: security
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rbac
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: security/rbac
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: network-policies
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: security/network-policies
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

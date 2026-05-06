@@ -1,0 +1,33 @@
+image:
+  repository: redpandadata/connect
+  tag: "4.27.0"
+  pullPolicy: IfNotPresent
+
+# Each pipeline runs as a separate Deployment
+pipelines:
+  - name: mqtt-to-redpanda
+    configKey: mqtt-to-redpanda.yaml
+  - name: redpanda-to-nats
+    configKey: redpanda-to-nats.yaml
+  - name: redpanda-to-ibmmq
+    configKey: redpanda-to-ibmmq.yaml
+  - name: redpanda-to-s3
+    configKey: redpanda-to-s3.yaml
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  readOnlyRootFilesystem: true
+
+podLabels:
+  app: redpanda-connect
+  version: "4.27.0"
+  component: messaging

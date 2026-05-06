@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: monitoring/prometheus
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki-stack
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: monitoring/loki
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

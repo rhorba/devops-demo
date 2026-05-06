@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-latest-tag
+  annotations:
+    policies.kyverno.io/title: Disallow Latest Image Tag
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Using 'latest' image tags makes deployments non-deterministic. Pinned
+      tags ensure reproducible deployments. This policy is set to Audit for
+      the demo (local registry uses :latest for convenience).
+spec:
+  validationFailureAction: Audit  # Audit only — demo uses :latest from local registry
+  background: true
+  rules:
+    - name: check-image-tag
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaces: [apps]
+      validate:
+        message: "Image tag 'latest' is not allowed in production — use a pinned version"
+        pattern:
+          spec:
+            containers:
+              - image: "!*:latest"

@@ -1,0 +1,160 @@
+{
+  "__inputs": [],
+  "__requires": [],
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "palette-classic" }, "unit": "short" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "calcs": ["mean", "max"], "displayMode": "table" } },
+      "targets": [
+        {
+          "expr": "rate(sensor_messages_published_total[1m]) * 60",
+          "legendFormat": "MQTT pub/min — {{zone}}/{{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "MQTT Messages Published (per zone/type)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "unit": "short",
+          "thresholds": { "mode": "absolute", "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 100},
+            {"color": "red", "value": 1000}
+          ]}
+        }
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "orientation": "auto", "textMode": "auto" },
+      "targets": [
+        {
+          "expr": "datasink_kafka_consumer_lag",
+          "legendFormat": "Kafka consumer lag",
+          "refId": "A"
+        }
+      ],
+      "title": "Kafka Consumer Lag (data-sink)",
+      "type": "gauge"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 8 },
+      "id": 3,
+      "targets": [
+        {
+          "expr": "rate(datasink_records_sinked_total[1m]) * 60",
+          "legendFormat": "Records/min → S3",
+          "refId": "A"
+        }
+      ],
+      "title": "S3 Archival Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 8 },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "rate(enterprise_mq_messages_consumed_total[1m]) * 60",
+          "legendFormat": "IBM MQ consumed/min",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(enterprise_sqs_messages_sent_total[1m]) * 60",
+          "legendFormat": "SQS forwarded/min",
+          "refId": "B"
+        }
+      ],
+      "title": "IBM MQ → SQS Throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 8 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, rate(enterprise_process_duration_seconds_bucket[5m]))",
+          "legendFormat": "p99 MQ→SQS latency",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.50, rate(enterprise_process_duration_seconds_bucket[5m]))",
+          "legendFormat": "p50 MQ→SQS latency",
+          "refId": "B"
+        }
+      ],
+      "title": "IBM MQ → SQS Processing Latency",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "rate(apigateway_nats_messages_received_total[1m]) * 60",
+          "legendFormat": "NATS → API msgs/min",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(apigateway_http_requests_total[1m]) * 60",
+          "legendFormat": "HTTP req/min — {{method}} {{path}}",
+          "refId": "B"
+        }
+      ],
+      "title": "API Gateway — NATS + HTTP Traffic",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "short" } },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "rate(sensor_publish_errors_total[5m])",
+          "legendFormat": "MQTT errors — {{zone}}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(datasink_s3_errors_total[5m])",
+          "legendFormat": "S3 write errors",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(enterprise_errors_total[5m])",
+          "legendFormat": "Enterprise errors — {{type}}",
+          "refId": "C"
+        }
+      ],
+      "title": "Error Rate by Component",
+      "type": "timeseries"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["messaging", "devops-demo"],
+  "title": "Message Pipeline Overview",
+  "uid": "devops-demo-messaging",
+  "version": 1
+}

@@ -1,0 +1,50 @@
+{{- range .Values.pipelines }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rpc-{{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    pipeline: {{ .name }}
+    {{ toYaml $.Values.podLabels | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pipeline: {{ .name }}
+  template:
+    metadata:
+      labels:
+        pipeline: {{ .name }}
+        {{ toYaml $.Values.podLabels | nindent 8 }}
+    spec:
+      securityContext: {{ toYaml $.Values.securityContext | nindent 8 }}
+      containers:
+        - name: connect
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+          args: ["run", "/etc/connect/{{ .configKey }}"]
+          ports:
+            - name: metrics
+              containerPort: 4195
+          volumeMounts:
+            - name: config
+              mountPath: /etc/connect
+          resources: {{ toYaml $.Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 4195
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 4195
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: redpanda-connect-pipelines
+{{- end }}

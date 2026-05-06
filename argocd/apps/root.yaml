@@ -1,0 +1,24 @@
+# Root Application — bootstraps all other Applications (App of Apps pattern)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devops-demo-root
+  namespace: platform
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: argocd/apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: platform
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

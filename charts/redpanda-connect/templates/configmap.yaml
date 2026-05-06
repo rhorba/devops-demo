@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redpanda-connect-pipelines
+  namespace: {{ .Release.Namespace }}
+data:
+  mqtt-to-redpanda.yaml: |
+    input:
+      mqtt:
+        urls: ["tcp://mosquitto.messaging.svc.cluster.local:1883"]
+        topics: ["sensors/#"]
+        client_id: "connect-mqtt-source"
+        clean_session: true
+        qos: 1
+
+    pipeline:
+      processors:
+        - log:
+            level: DEBUG
+            message: "MQTT→Redpanda: ${! meta("mqtt_topic") }"
+        - mapping: |
+            root = this
+            root.source = "mqtt"
+            root.broker = "mosquitto"
+            root.routed_at = now()
+
+    output:
+      kafka_franz:
+        seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
+        topic: raw.telemetry
+        compression: snappy
+
+    metrics:
+      prometheus:
+        push_url: ""
+      http:
+        address: "0.0.0.0:4195"
+
+  redpanda-to-nats.yaml: |
+    input:
+      kafka_franz:
+        seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
+        topics: ["raw.telemetry"]
+        consumer_group: "connect-nats-bridge"
+        start_from_oldest: false
+
+    pipeline:
+      processors:
+        - log:
+            level: DEBUG
+            message: "Redpanda→NATS: routing telemetry"
+        - mapping: |
+            root = this
+            root.bridge = "redpanda→nats"
+
+    output:
+      nats_jetstream:
+        urls: ["nats://nats.messaging.svc.cluster.local:4222"]
+        subject: "telemetry.${! json("zone") }.${! json("type") }"
+
+    metrics:
+      http:
+        address: "0.0.0.0:4195"
+
+  redpanda-to-ibmmq.yaml: |
+    input:
+      kafka_franz:
+        seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
+        topics: ["raw.telemetry"]
+        consumer_group: "connect-ibmmq-bridge"
+        start_from_oldest: false
+
+    pipeline:
+      processors:
+        - mapping: |
+            root = this
+            root.bridge = "redpanda→ibmmq"
+            root.enterprise_ts = now()
+
+    output:
+      ibmmq:
+        host: ibm-mq.messaging.svc.cluster.local
+        port: 1414
+        queue_manager: QM1
+        channel: DEV.APP.SVRCONN
+        queue: DEV.QUEUE.1
+        username: app
+        password: "${MQ_APP_PASSWORD}"
+
+    metrics:
+      http:
+        address: "0.0.0.0:4195"
+
+  redpanda-to-s3.yaml: |
+    input:
+      kafka_franz:
+        seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
+        topics: ["raw.telemetry"]
+        consumer_group: "connect-s3-archive"
+        start_from_oldest: true
+
+    pipeline:
+      processors:
+        - mapping: |
+            root = this
+            root.archived_at = now()
+
+    output:
+      aws_s3:
+        bucket: telemetry-archive
+        path: "${! timestamp_unix() }/${! uuid_v4() }.json"
+        endpoint: "http://localstack.localstack.svc.cluster.local:4566"
+        region: us-east-1
+        force_path_style_urls: true
+        credentials:
+          id: test
+          secret: test
+
+    metrics:
+      http:
+        address: "0.0.0.0:4195"

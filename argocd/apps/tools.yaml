@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: node-red
+  namespace: platform
+spec:
+  project: devops-demo
+  source:
+    repoURL: https://github.com/rhorba/devops-demo
+    targetRevision: main
+    path: charts/node-red
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tools
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

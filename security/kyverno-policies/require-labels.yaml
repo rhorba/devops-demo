@@ -1,0 +1,28 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-pod-labels
+  annotations:
+    policies.kyverno.io/title: Require Pod Labels
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/description: >-
+      All pods must carry 'app' and 'component' labels for proper service
+      discovery, Prometheus scraping, and log correlation in Loki.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: check-required-labels
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaces: [apps, messaging, tools]
+      validate:
+        message: "Pods must have 'app' and 'component' labels"
+        pattern:
+          metadata:
+            labels:
+              app: "?*"
+              component: "?*"

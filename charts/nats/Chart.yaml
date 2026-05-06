@@ -1,0 +1,10 @@
+apiVersion: v2
+name: nats-demo
+description: NATS JetStream — cloud-native messaging
+type: application
+version: 1.0.0
+appVersion: "2.10.14"
+dependencies:
+  - name: nats
+    version: "1.1.12"
+    repository: "https://nats-io.github.io/k8s/helm/charts/"
