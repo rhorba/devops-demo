@@ -119,6 +119,8 @@ kube-prometheus-stack:
       devops-demo: {}  # loaded via ConfigMap sidecar
 
     sidecar:
+      datasources:
+        defaultDatasourceEnabled: false  # we define datasources manually in datasources.yaml above
       dashboards:
         enabled: true
         searchNamespace: observability
