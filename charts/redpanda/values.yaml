@@ -9,6 +9,29 @@ redpanda:
       labels:
         app: redpanda
         component: messaging
+    sideCars:
+      configWatcher:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+      controllers:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 101
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
 
   resources:
     cpu:
