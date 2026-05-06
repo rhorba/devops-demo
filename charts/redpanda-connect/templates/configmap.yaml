@@ -5,6 +5,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   mqtt-to-redpanda.yaml: |
+    http:
+      address: "0.0.0.0:4195"
+
     input:
       mqtt:
         urls: ["tcp://mosquitto.messaging.svc.cluster.local:1883"]
@@ -31,12 +34,12 @@ data:
         compression: snappy
 
     metrics:
-      prometheus:
-        push_url: ""
-      http:
-        address: "0.0.0.0:4195"
+      prometheus: {}
 
   redpanda-to-nats.yaml: |
+    http:
+      address: "0.0.0.0:4195"
+
     input:
       kafka_franz:
         seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
@@ -48,21 +51,23 @@ data:
       processors:
         - log:
             level: DEBUG
-            message: "Redpanda→NATS: routing telemetry"
+            message: "Redpanda to NATS: routing telemetry"
         - mapping: |
             root = this
-            root.bridge = "redpanda→nats"
+            root.bridge = "redpanda-to-nats"
 
     output:
       nats_jetstream:
         urls: ["nats://nats.messaging.svc.cluster.local:4222"]
-        subject: "telemetry.${! json("zone") }.${! json("type") }"
+        subject: 'telemetry.${! json("zone") }.${! json("type") }'
 
     metrics:
-      http:
-        address: "0.0.0.0:4195"
+      prometheus: {}
 
   redpanda-to-ibmmq.yaml: |
+    http:
+      address: "0.0.0.0:4195"
+
     input:
       kafka_franz:
         seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
@@ -74,7 +79,7 @@ data:
       processors:
         - mapping: |
             root = this
-            root.bridge = "redpanda→ibmmq"
+            root.bridge = "redpanda-to-ibmmq"
             root.enterprise_ts = now()
 
     # Uses AMQP 1.0 (port 5672) — available in community image without CGO.
@@ -85,10 +90,12 @@ data:
         target_address: "DEV.QUEUE.1"
 
     metrics:
-      http:
-        address: "0.0.0.0:4195"
+      prometheus: {}
 
   redpanda-to-s3.yaml: |
+    http:
+      address: "0.0.0.0:4195"
+
     input:
       kafka_franz:
         seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
@@ -105,7 +112,7 @@ data:
     output:
       aws_s3:
         bucket: telemetry-archive
-        path: "${! timestamp_unix() }/${! uuid_v4() }.json"
+        path: '${! timestamp_unix() }/${! uuid_v4() }.json'
         endpoint: "http://localstack.localstack.svc.cluster.local:4566"
         region: us-east-1
         force_path_style_urls: true
@@ -114,5 +121,4 @@ data:
           secret: test
 
     metrics:
-      http:
-        address: "0.0.0.0:4195"
+      prometheus: {}
