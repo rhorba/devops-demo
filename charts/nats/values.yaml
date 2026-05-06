@@ -43,6 +43,17 @@ nats:
   promExporter:
     enabled: true
     port: 7778
+    merge:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 50m
+          memory: 64Mi
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
 
   service:
     enabled: true
