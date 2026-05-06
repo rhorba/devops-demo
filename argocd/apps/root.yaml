@@ -1,4 +1,6 @@
 # Root Application — bootstraps all other Applications (App of Apps pattern)
+# IMPORTANT: Update repoURL to match your fork before running bootstrap.
+# Example: https://github.com/YOUR_USERNAME/devops-demo
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

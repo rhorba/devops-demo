@@ -1,7 +1,7 @@
 image:
   repository: localhost:5001/data-sink
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 env:
   KAFKA_BROKERS: "redpanda.messaging.svc.cluster.local:9092"

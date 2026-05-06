@@ -1,7 +1,7 @@
 image:
   repository: localhost:5001/enterprise-consumer
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 env:
   MQ_QMGR: "QM1"

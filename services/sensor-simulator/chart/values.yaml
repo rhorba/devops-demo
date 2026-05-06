@@ -1,7 +1,7 @@
 image:
   repository: localhost:5001/sensor-simulator
   tag: latest
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 env:
   MQTT_BROKER: "tcp://mosquitto.messaging.svc.cluster.local:1883"

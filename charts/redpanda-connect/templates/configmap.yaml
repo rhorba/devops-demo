@@ -77,15 +77,12 @@ data:
             root.bridge = "redpanda→ibmmq"
             root.enterprise_ts = now()
 
+    # Uses AMQP 1.0 (port 5672) — available in community image without CGO.
+    # enterprise-consumer reads from this same queue via AMQP 1.0.
     output:
-      ibmmq:
-        host: ibm-mq.messaging.svc.cluster.local
-        port: 1414
-        queue_manager: QM1
-        channel: DEV.APP.SVRCONN
-        queue: DEV.QUEUE.1
-        username: app
-        password: "${MQ_APP_PASSWORD}"
+      amqp_1:
+        url: "amqp://app:${MQ_APP_PASSWORD}@ibm-mq.messaging.svc.cluster.local:5672"
+        target_address: "DEV.QUEUE.1"
 
     metrics:
       http:

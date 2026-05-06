@@ -30,6 +30,10 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /etc/connect
+          {{- if .env }}
+          env:
+            {{- toYaml .env | nindent 12 }}
+          {{- end }}
           resources: {{ toYaml $.Values.resources | nindent 12 }}
           livenessProbe:
             httpGet:

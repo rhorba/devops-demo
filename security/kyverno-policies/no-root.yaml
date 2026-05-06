@@ -24,8 +24,8 @@ spec:
         anyPattern:
           - spec:
               securityContext:
-                runAsNonRoot: "true"
+                runAsNonRoot: true
           - spec:
               containers:
                 - securityContext:
-                    runAsNonRoot: "true"
+                    runAsNonRoot: true

@@ -11,6 +11,12 @@ pipelines:
     configKey: redpanda-to-nats.yaml
   - name: redpanda-to-ibmmq
     configKey: redpanda-to-ibmmq.yaml
+    env:
+      - name: MQ_APP_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: ibm-mq-secret
+            key: app-password
   - name: redpanda-to-s3
     configKey: redpanda-to-s3.yaml
 

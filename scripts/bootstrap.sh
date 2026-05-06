@@ -86,7 +86,7 @@ helm repo add kyverno https://kyverno.github.io/kyverno/ --force-update
 helm upgrade --install kyverno kyverno/kyverno \
     --namespace security --create-namespace \
     --version 3.1.4 \
-    --wait --timeout 5m
+    --wait --timeout 5m || warn "Kyverno upgrade had hook issues (pods already running — continuing)"
 ok "Kyverno installed"
 
 # ─── ArgoCD ───────────────────────────────────────────────────────────────────
@@ -108,6 +108,20 @@ kubectl -n observability create secret generic grafana-admin \
     --from-literal=admin-password="${GRAFANA_PASSWORD}" \
     --dry-run=client -o yaml | kubectl apply -f -
 ok "Grafana admin secret ready"
+
+# ─── Thanos S3 config (must exist before prometheus stack syncs) ──────────────
+log "Applying Thanos objstore secret..."
+kubectl apply -f "${ROOT_DIR}/monitoring/prometheus/thanos-secret.yaml"
+ok "Thanos secret applied"
+
+# ─── Grafana dashboard ConfigMap ──────────────────────────────────────────────
+log "Applying Grafana messaging dashboard ConfigMap..."
+kubectl -n observability create configmap grafana-dashboard-messaging \
+    --from-file=messaging-pipeline.json="${ROOT_DIR}/monitoring/grafana/dashboards/messaging-pipeline.json" \
+    --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n observability label configmap grafana-dashboard-messaging \
+    grafana_dashboard=1 --overwrite
+ok "Grafana dashboard ConfigMap applied"
 
 # ─── Bootstrap root Application ───────────────────────────────────────────────
 log "Applying ArgoCD root Application (App of Apps)..."

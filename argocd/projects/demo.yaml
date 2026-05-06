@@ -22,6 +22,10 @@ spec:
       server: https://kubernetes.default.svc
     - namespace: tools
       server: https://kubernetes.default.svc
+    - namespace: kube-system
+      server: https://kubernetes.default.svc
+    - namespace: "*"
+      server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
