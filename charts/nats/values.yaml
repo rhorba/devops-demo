@@ -9,25 +9,33 @@ nats:
         enabled: false
     cluster:
       enabled: false  # single-node for demo
+
   container:
     image:
       tag: "2.10.14-alpine"
-    resources:
-      requests:
-        cpu: 50m
-        memory: 128Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
+    merge:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+
   podTemplate:
-    topologySpreadConstraints: {}
-    securityContext:
-      runAsNonRoot: true
-      runAsUser: 1000
-    labels:
-      app: nats
-      version: "2.10.14"
-      component: messaging
+    merge:
+      metadata:
+        labels:
+          app: nats
+          version: "2.10.14"
+          component: messaging
+      spec:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
 
   natsBox:
     enabled: false  # natsBox has no runAsNonRoot — blocked by Kyverno in demo
