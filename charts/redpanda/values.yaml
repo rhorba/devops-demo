@@ -70,7 +70,7 @@ redpanda:
     cluster:
       auto_create_topics_enabled: true
       default_topic_partitions: 3
-      default_topic_replication_factor: 1
+      default_topic_replications: 1
 
   console:
     enabled: false  # console Deployment fails Kyverno (no runAsNonRoot/labels) — not needed for demo
