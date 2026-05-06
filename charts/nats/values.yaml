@@ -29,6 +29,9 @@ nats:
       version: "2.10.14"
       component: messaging
 
+  natsBox:
+    enabled: false  # natsBox has no runAsNonRoot — blocked by Kyverno in demo
+
   promExporter:
     enabled: true
     port: 7778

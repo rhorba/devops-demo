@@ -17,7 +17,7 @@ data:
       processors:
         - log:
             level: DEBUG
-            message: "MQTT→Redpanda: ${! meta("mqtt_topic") }"
+            message: 'MQTT→Redpanda: ${! meta("mqtt_topic") }'
         - mapping: |
             root = this
             root.source = "mqtt"
