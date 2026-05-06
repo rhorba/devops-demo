@@ -45,7 +45,7 @@ data:
         seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
         topics: ["raw.telemetry"]
         consumer_group: "connect-nats-bridge"
-        start_from_oldest: false
+        start_offset: latest
 
     pipeline:
       processors:
@@ -73,7 +73,7 @@ data:
         seed_brokers: ["redpanda.messaging.svc.cluster.local:9092"]
         topics: ["raw.telemetry"]
         consumer_group: "connect-ibmmq-bridge"
-        start_from_oldest: false
+        start_offset: latest
 
     pipeline:
       processors:

@@ -4,7 +4,7 @@ nats:
       enabled: true
       memStorage:
         enabled: true
-        size: 1Gi
+        size: 256Mi
       fileStorage:
         enabled: false
     cluster:
