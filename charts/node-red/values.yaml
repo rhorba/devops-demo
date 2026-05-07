@@ -16,5 +16,6 @@ resources:
     memory: 256Mi
 
 ingress:
+  enabled: false
   host: nodered.demo.local
   ingressClassName: haproxy

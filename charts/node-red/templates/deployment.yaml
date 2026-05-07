@@ -133,6 +133,7 @@ spec:
     - name: http
       port: 1880
       targetPort: http
+{{- if .Values.ingress.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -152,3 +153,4 @@ spec:
                 name: node-red
                 port:
                   name: http
+{{- end }}
