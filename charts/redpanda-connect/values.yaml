@@ -11,6 +11,8 @@ pipelines:
     configKey: redpanda-to-nats.yaml
   - name: redpanda-to-ibmmq
     configKey: redpanda-to-ibmmq.yaml
+    tlsCertConfigMap: ibm-mq-tls-cert
+    tlsCertKey: ibm-mq.crt
     env:
       - name: MQ_APP_PASSWORD
         valueFrom:
