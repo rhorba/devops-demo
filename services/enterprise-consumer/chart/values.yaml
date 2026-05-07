@@ -1,13 +1,13 @@
 image:
   repository: localhost:5001/enterprise-consumer
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 env:
   MQ_QMGR: "QM1"
   MQ_QUEUE: "DEV.QUEUE.1"
   MQ_HOST: "ibm-mq.messaging.svc.cluster.local"
-  MQ_AMQP_PORT: "5672"
+  MQ_REST_PORT: "9443"
   MQ_APP_USER: "app"
   SQS_QUEUE_URL: "http://localstack.localstack.svc.cluster.local:4566/000000000000/enterprise-events"
   AWS_ENDPOINT_URL: "http://localstack.localstack.svc.cluster.local:4566"

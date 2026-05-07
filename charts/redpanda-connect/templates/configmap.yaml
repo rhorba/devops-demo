@@ -95,6 +95,7 @@ data:
           username: app
           password: "${MQ_APP_PASSWORD}"
         tls:
+          enabled: true
           skip_cert_verify: true
 
     metrics:

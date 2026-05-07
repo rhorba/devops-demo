@@ -1,5 +1,5 @@
 # Pure Go build — no CGO, no IBM MQ SDK headers required.
-# Connects to IBM MQ via AMQP 1.0 (port 5672) instead of the native MQ client.
+# Connects to IBM MQ via REST API (port 9443/HTTPS) — AMQP not available in Developer image.
 FROM golang:1.22-alpine AS builder
 WORKDIR /app
 COPY go.mod go.sum ./

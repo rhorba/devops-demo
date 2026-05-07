@@ -156,3 +156,8 @@
   3. enterprise-consumer AMQP port 5672 refused (image may not have been rebuilt)
 - Open risks: 1 — Kind cluster is ~28h old; may stop on machine restart
 ---
+
+### [2026-05-07 10:30] SESSION_START
+- Resuming from: SESSION_END 2026-05-07 10:10
+- Plan: Fix 2 IBM MQ pipeline bugs → full 6/6 pipeline smoke-test
+---
