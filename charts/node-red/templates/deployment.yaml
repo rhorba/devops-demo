@@ -91,7 +91,7 @@ data:
         "id":"dashboard-text","type":"ui_text",
         "z":"tab1","name":"Live Reading",
         "group":"dash-group","order":1,
-        "format":"Zone: {{msg.payload.zone}} | {{msg.payload.type}}: {{msg.payload.value}} {{msg.payload.unit}}",
+        "format":"Zone: {{`{{msg.payload.zone}}`}} | {{`{{msg.payload.type}}`}}: {{`{{msg.payload.value}}`}} {{`{{msg.payload.unit}}`}}",
         "x":580,"y":140,"wires":[]
       },
       {
