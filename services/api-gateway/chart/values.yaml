@@ -10,9 +10,7 @@ env:
   LISTEN_ADDR: ":8080"
 
 ingress:
-  enabled: true
-  host: api.demo.local
-  ingressClassName: haproxy
+  enabled: false
 
 resources:
   requests:
