@@ -79,10 +79,7 @@ kube-prometheus-stack:
         root_url: http://grafana.demo.local
 
     ingress:
-      enabled: true
-      ingressClassName: haproxy
-      hosts:
-        - grafana.demo.local
+      enabled: false
 
     datasources:
       datasources.yaml:
