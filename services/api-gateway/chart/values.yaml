@@ -25,7 +25,6 @@ resources:
 securityContext:
   runAsNonRoot: true
   runAsUser: 65532
-  readOnlyRootFilesystem: true
 
 podLabels:
   app: api-gateway

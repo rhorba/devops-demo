@@ -31,7 +31,6 @@ resources:
 securityContext:
   runAsNonRoot: true
   runAsUser: 1000
-  readOnlyRootFilesystem: true
 
 podLabels:
   app: redpanda-connect
