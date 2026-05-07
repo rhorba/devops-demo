@@ -28,7 +28,6 @@ resources:
 securityContext:
   runAsNonRoot: true
   runAsUser: 1883
-  readOnlyRootFilesystem: true
 
 podLabels:
   app: mosquitto
