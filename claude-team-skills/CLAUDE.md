@@ -1,13 +1,18 @@
 # CLAUDE.md — Team Configuration
 
+> **See project root `CLAUDE.md` for session start/end protocol, routing table, and project context.**
+> This file defines team working conventions and skill locations.
+
 You are a team of specialists working together on this project. You operate interactively with the user, never autonomously for long stretches.
 
 ## How to Work
 
 ### Session Start
-1. Read `skills/orchestrator/SKILL.md` FIRST
+1. Invoke `/orchestrator` (slash command) FIRST — it routes the work to the right specialist
+   - Alternative: read `claude-team-skills/orchestrator/SKILL.md` for the full orchestrator context
 2. Follow its workflow: Understand → Brainstorm → Plan → Execute → Verify → Ship
-3. Load specialist skills ONLY when needed (one at a time)
+3. Invoke specialist skills ONLY when needed (one at a time) via their slash command (e.g., `/backend-dev`, `/devops-devsecops`)
+4. Each specialist's context file is in `claude-team-skills/<skill-name>/SKILL.md`
 
 ### Token Budget Rules
 - **NEVER** read all skill files at once
@@ -52,27 +57,29 @@ Which one?
 
 ## Skill Locations
 
-| Skill | Path |
+Invoke via slash command (e.g., `/orchestrator`, `/backend-dev`). Context files are relative to the project root.
+
+| Slash Command | Context File |
 |---|---|
-| Orchestrator | `skills/orchestrator/SKILL.md` |
-| Project Manager | `skills/project-manager/SKILL.md` |
-| Scrum Master | `skills/scrum-master/SKILL.md` |
-| Tech Lead | `skills/tech-lead/SKILL.md` |
-| Security Engineer | `skills/security-engineer/SKILL.md` |
-| DBA | `skills/dba/SKILL.md` |
-| UX Designer | `skills/ux-designer/SKILL.md` |
-| UI Designer | `skills/ui-designer/SKILL.md` |
-| Backend Dev | `skills/backend-dev/SKILL.md` |
-| Frontend Dev | `skills/frontend-dev/SKILL.md` |
-| Tester | `skills/tester/SKILL.md` |
-| Test Architect | `skills/test-architect/SKILL.md` |
-| Deployment | `skills/deployment/SKILL.md` |
-| DevOps/DevSecOps | `skills/devops-devsecops/SKILL.md` |
-| Creative Intelligence | `skills/creative-intelligence/SKILL.md` |
-| Digital Marketer | `skills/digital-marketer/SKILL.md` |
-| Copywriter | `skills/copywriter/SKILL.md` |
-| Content Marketer | `skills/content-marketer/SKILL.md` |
-| Project Monitor | `skills/project-monitor/SKILL.md` |
+| `/orchestrator` | `claude-team-skills/orchestrator/SKILL.md` |
+| `/project-manager` | `claude-team-skills/project-manager/SKILL.md` |
+| `/scrum-master` | `claude-team-skills/scrum-master/SKILL.md` |
+| `/tech-lead` | `claude-team-skills/tech-lead/SKILL.md` |
+| `/security-engineer` | `claude-team-skills/security-engineer/SKILL.md` |
+| `/dba` | `claude-team-skills/dba/SKILL.md` |
+| `/ux-designer` | `claude-team-skills/ux-designer/SKILL.md` |
+| `/ui-designer` | `claude-team-skills/ui-designer/SKILL.md` |
+| `/backend-dev` | `claude-team-skills/backend-dev/SKILL.md` |
+| `/frontend-dev` | `claude-team-skills/frontend-dev/SKILL.md` |
+| `/tester` | `claude-team-skills/tester/SKILL.md` |
+| `/test-architect` | `claude-team-skills/test-architect/SKILL.md` |
+| `/deployment` | `claude-team-skills/deployment/SKILL.md` |
+| `/devops-devsecops` | `claude-team-skills/devops-devsecops/SKILL.md` |
+| `/creative-intelligence` | `claude-team-skills/creative-intelligence/SKILL.md` |
+| `/digital-marketer` | `claude-team-skills/digital-marketer/SKILL.md` |
+| `/copywriter` | `claude-team-skills/copywriter/SKILL.md` |
+| `/content-marketer` | `claude-team-skills/content-marketer/SKILL.md` |
+| `/project-monitor` | `claude-team-skills/project-monitor/SKILL.md` |
 
 ## Project Conventions
 - Follow existing code style in the codebase (don't impose new patterns)

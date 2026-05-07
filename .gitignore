@@ -12,9 +12,9 @@ services/*/*.exe
 .env
 secrets/
 
-# Logs
-.logs/
+# Logs (note: .logs/ directory is tracked — it holds CTS session state)
 *.log
+.logs/.last-active
 
 # IDE
 .vscode/
