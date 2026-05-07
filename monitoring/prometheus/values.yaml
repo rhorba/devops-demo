@@ -24,10 +24,7 @@ kube-prometheus-stack:
 
       # Thanos sidecar for HA + long-term storage → LocalStack S3
       thanos:
-        image:
-          registry: quay.io
-          repository: thanos/thanos
-          tag: v0.35.1
+        image: "quay.io/thanos/thanos:v0.35.1"
         objectStorageConfig:
           existingSecret:
             name: thanos-objstore-config
