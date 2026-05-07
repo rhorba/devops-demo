@@ -82,12 +82,20 @@ data:
             root.bridge = "redpanda-to-ibmmq"
             root.enterprise_ts = now()
 
-    # Uses AMQP 1.0 (port 5672) — available in community image without CGO.
-    # enterprise-consumer reads from this same queue via AMQP 1.0.
+    # IBM MQ REST Messaging API (AMQP not available in Developer image)
     output:
-      amqp_1:
-        url: "amqp://app:${MQ_APP_PASSWORD}@ibm-mq.messaging.svc.cluster.local:5672"
-        target_address: "DEV.QUEUE.1"
+      http_client:
+        url: "https://ibm-mq.messaging.svc.cluster.local:9443/ibmmq/rest/v2/messaging/qmgr/QM1/queue/DEV.QUEUE.1/message"
+        verb: POST
+        headers:
+          Content-Type: "application/json"
+          ibm-mq-rest-csrf-token: "x"
+        basic_auth:
+          enabled: true
+          username: app
+          password: "${MQ_APP_PASSWORD}"
+        tls:
+          skip_cert_verify: true
 
     metrics:
       prometheus: {}
