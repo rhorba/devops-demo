@@ -58,6 +58,10 @@ loki-stack:
             kubernetes_sd_configs:
               - role: pod
             relabel_configs:
+              - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
+                separator: /
+                replacement: /var/log/pods/*$1/*.log
+                target_label: __path__
               - source_labels: [__meta_kubernetes_pod_label_app]
                 target_label: app
               - source_labels: [__meta_kubernetes_namespace]
