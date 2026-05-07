@@ -16,3 +16,12 @@
 - **ArgoCD apps synced**: Root app healthy; child apps syncing
 - **Kind cluster**: 3-node cluster running (1 control-plane + 2 workers)
 - **Tools installed**: kind v0.31.0, argocd CLI v3.3.8 (via winget)
+
+### [2026-05-07 10:00] DAILY_SNAPSHOT — Post smoke-test
+- **ArgoCD apps**: 18/18 Synced Healthy ✅
+- **Pipeline legs flowing**: 4/6
+  - MQTT→Redpanda ✅ | Redpanda→NATS ✅ | Redpanda→S3 ✅ | API GW /health ✅
+  - Redpanda→IBM MQ ❌ (TLS SAN) | enterprise-consumer→SQS ❌ (AMQP refused)
+- **LocalStack S3**: Live PutObject 200 every ~1s ✅
+- **Open issues**: 3 (ArgoCD CLI mismatch, IBM MQ TLS, enterprise-consumer AMQP)
+- **Kind cluster**: devops-demo, 3 nodes, age ~28h

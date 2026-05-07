@@ -105,3 +105,54 @@
 - **Open issues**: ArgoCD CLI v3/v2 gRPC mismatch (use REST API workaround)
 - **Open risks**: Kind cluster may have stopped — may need `kind create cluster` again
 ---
+
+### [2026-05-07 09:35] SESSION_START
+- Resuming from: SESSION_END 2026-05-06
+- Context: Cluster fully healthy (18/18 apps Synced Healthy, commit c0e8584) — sessions.md not yet updated to reflect 2026-05-07 fixes
+- Plan: TBD — awaiting user direction
+---
+
+### [2026-05-07 ~00:00] SESSION_START (backfilled)
+- Resuming from: SESSION_END 2026-05-06
+- Plan: Fix remaining broken ArgoCD apps → get all 18 Synced Healthy
+---
+
+### [2026-05-07 ~23:59] SESSION_END (backfilled)
+- Specialist: DevOps/DevSecOps
+- Completed:
+  - redpanda configmap: removed invalid `default_topic_replication_factor` from bootstrap.yaml + redpanda.yaml → pod no longer CrashLoops
+  - Prometheus CR: fixed thanos.image — must be string not nested object
+  - Grafana, api-gateway, node-red Ingresses: disabled (ArgoCD health gate incompatible with Kind+NodePort)
+  - readOnlyRootFilesystem removed from pod-level securityContext across 6 apps (it's container-level only — Kyverno was rejecting)
+  - enterprise-consumer: rewrote IBM MQ connector from AMQP to REST API (port 9443/HTTPS) — IBM MQ Developer image does not support AMQP
+  - redpanda-connect: updated ibm-mq pipeline to use REST API
+  - LocalStack memory limit: 512Mi → 1Gi (was OOMKilled under load)
+  - promtail scrapeConfigs: added `__path__` relabel rule (logs were not found without it)
+  - node-red Helm chart: escaped `{{msg.payload.*}}` template vars (conflicting with Helm Go templates)
+  - All 18 ArgoCD applications: Synced Healthy ✅
+  - Latest commit: c0e8584 (node-red Ingress fix)
+- In progress: Nothing
+- Blocked: Nothing
+- Next session: Smoke-test full pipeline, run make demo, generate session report
+- Open issues: 0
+- Open risks: AppProject not auto-synced — must `kubectl apply -f argocd/projects/demo.yaml` on any change
+---
+
+### [2026-05-07 10:10] SESSION_END
+- Specialist: Orchestrator → DevOps/DevSecOps (smoke-test) → Project Monitor (report)
+- Completed:
+  - A: Backfilled 2026-05-07 session log (8 architectural fixes, 18/18 apps Synced Healthy)
+  - B: Full pipeline smoke-test — 4/6 legs flowing, 2 IBM MQ bugs surfaced
+  - D: Status report generated — issues.md + metrics.md updated
+- In progress: Nothing
+- Blocked: Nothing
+- Next session:
+  - Fix IBM MQ TLS: add tls_skip_cert_verify to redpanda-connect ibm-mq configmap
+  - Fix enterprise-consumer: verify/rebuild REST API image (AMQP still in running pod)
+  - Then: full 6/6 pipeline smoke-test → make demo
+- Open issues: 3
+  1. ArgoCD CLI v3/v2 mismatch (cosmetic, workaround in place)
+  2. IBM MQ TLS cert SAN mismatch (rpc-redpanda-to-ibmmq)
+  3. enterprise-consumer AMQP port 5672 refused (image may not have been rebuilt)
+- Open risks: 1 — Kind cluster is ~28h old; may stop on machine restart
+---
