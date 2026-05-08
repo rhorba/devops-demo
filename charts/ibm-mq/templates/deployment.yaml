@@ -35,6 +35,16 @@ spec:
                 secretKeyRef:
                   name: ibm-mq-secret
                   key: admin-password
+            - name: MQ_APP_PASSWORD_SECURE
+              valueFrom:
+                secretKeyRef:
+                  name: ibm-mq-secret
+                  key: app-password
+            - name: MQ_ADMIN_PASSWORD_SECURE
+              valueFrom:
+                secretKeyRef:
+                  name: ibm-mq-secret
+                  key: admin-password
             - name: MQ_ENABLE_EMBEDDED_WEB_SERVER
               value: "1"
           ports:

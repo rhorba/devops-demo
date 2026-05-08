@@ -95,7 +95,8 @@ data:
           username: app
           password: "${MQ_APP_PASSWORD}"
         tls:
-          root_cas_file: /etc/tls/ibm-mq.crt
+          enabled: true
+          skip_cert_verify: true
 
     metrics:
       prometheus: {}
