@@ -40,7 +40,8 @@ localstack:
     version: "3.4.0"
     component: platform
 
-  # Init script to pre-create AWS resources
+  # Init script to pre-create AWS resources (runs after LocalStack is ready via /etc/localstack/init/ready.d)
+  enableStartupScripts: true
   startupScriptContent: |
     #!/usr/bin/env bash
     echo "Waiting for LocalStack..."
