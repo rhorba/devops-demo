@@ -7,8 +7,13 @@ localstack:
       targetPort: 4566
   livenessProbe:
     initialDelaySeconds: 20
+    timeoutSeconds: 5
+    periodSeconds: 30
+    failureThreshold: 5
   readinessProbe:
     initialDelaySeconds: 15
+    timeoutSeconds: 5
+    periodSeconds: 15
 
   extraEnvVars:
     - name: SERVICES
