@@ -221,3 +221,24 @@
 - Open risks: 1
   1. LocalStack is ephemeral — SQS queue and S3 bucket must be recreated after LocalStack restart (`awslocal sqs create-queue --queue-name enterprise-events && awslocal s3 mb s3://telemetry-archive`)
 ---
+
+### [2026-05-08 08:35] SESSION_END
+- Specialist: DevOps/DevSecOps → Project Monitor
+- Completed:
+  - Ran `make demo` — full 9-step walkthrough executed successfully
+  - Fixed LocalStack probe instability: timeout 1s→5s, period 10s→30s, failureThreshold 3→5 (commit b256b81). Pod stable at 0 restarts after fix.
+  - Fixed LocalStack startup script: `enableStartupScripts: true` added (commit 578bff2) — S3 buckets and SQS queue now auto-create on every pod start
+  - Verified 6/6 pipeline legs live at session end: NATS 225,906 msgs · SQS 15,182 msgs · S3 6,829 objects · IBM MQ queue 0 (consumer keeping pace)
+  - Port-forwards running: Grafana :3000, ArgoCD :8443, API Gateway :8080, Node-RED :1880
+- In progress: Nothing
+- Blocked: Nothing
+- Next session:
+  - `kind get clusters` — verify cluster still alive
+  - `kubectl -n platform get applications` — verify 18/18 Synced Healthy
+  - Start port-forwards: `kubectl -n observability port-forward svc/kube-prometheus-stack-grafana 3000:80 & kubectl -n platform port-forward svc/argocd-server 8443:443 & kubectl -n apps port-forward svc/api-gateway 8080:8080 &`
+  - Run the interview demo: `bash scripts/demo.sh`
+- Open issues: 1
+  1. ArgoCD CLI v3/v2 mismatch (cosmetic — use kubectl or REST API at https://localhost:8443)
+- Open risks: 1
+  1. Kind cluster is ephemeral — if machine restarted, run `kind create cluster` + `make bootstrap`
+---
