@@ -161,3 +161,35 @@
 - Resuming from: SESSION_END 2026-05-07 10:10
 - Plan: Fix 2 IBM MQ pipeline bugs → full 6/6 pipeline smoke-test
 ---
+
+### [2026-05-08 06:10] SESSION_END
+- Specialist: DevOps/DevSecOps
+- Completed:
+  - Bug 1 (TLS): Extracted system CA bundle from rpc-redpanda-to-ibmmq pod (base64, LF-only)
+  - Bug 1 (TLS): Generated IBM MQ self-signed cert (with CA:TRUE + correct SANs) — fingerprint 60:33:3C:2B:B0:05:65:FC
+  - Bug 1 (TLS): Combined CA bundle (system + IBM MQ cert) → ConfigMap `ibm-mq-ca-bundle` in messaging ns
+  - Bug 1 (TLS): Updated pipelines.yaml template with `caBundleConfigMap` field → mounts combined bundle at /etc/ssl/certs/ca-certificates.crt via subPath
+  - Bug 1 (TLS): Pipeline pod now passes TLS verification (was x509 unknown authority, now gets 401/503 not TLS error)
+  - Bug 1 (Auth): Diagnosed Liberty auth failure — `MQ_APP_PASSWORD_SECURE` env var not set when mqweb restarted manually
+  - Bug 1 (Auth): Found correct Liberty config at /mnt/mqm/data/web/installations/Installation1/servers/mqweb/mqwebcontainer.xml (not /run/mqwebcontainer.xml)
+  - Bug 1 (Auth): Replaced `${env.MQ_APP_PASSWORD_SECURE}` with plain-text passw0rd in correct Liberty config → IBM MQ REST API now returns 201 ✅
+  - Bug 1: Direct curl test from IBM MQ pod → 201 Created ✅
+  - Bug 1: Pipeline pod → IBM MQ REST API → 503 MQRC_Q_FULL (queue full, consumer side not yet draining)
+  - Bug 2: enterprise-consumer in apps ns — new pod ImagePullBackOff (imagePullPolicy: Always, Kind registry reachability from node?), old pod still running old AMQP binary
+- In progress: enterprise-consumer new image pull (ImagePullBackOff)
+- Blocked:
+  1. IBM MQ Liberty auth fix is IN-POD ONLY (ephemeral — will be lost on pod restart). Need permanent fix in Helm chart.
+  2. enterprise-consumer new image (REST API binary) is not being pulled by new pod (ImagePullBackOff — Kind registry connectivity issue from worker nodes)
+  3. DEV.QUEUE.1 fills instantly (5000/5000 MAXDEPTH) because enterprise-consumer is not consuming
+- Next session:
+  - FIRST: Fix IBM MQ Liberty auth permanently (options: A) init-container that patches mqwebcontainer.xml on pod start, B) Helm chart ConfigMap override mounted at /mnt/mqm/data/web/installations/Installation1/servers/mqweb/mqwebcontainer.xml)
+  - THEN: Fix enterprise-consumer ImagePullBackOff — investigate Kind registry from worker node (check containerd mirror config), or rebuild with versioned tag instead of :latest
+  - THEN: Verify enterprise-consumer drains DEV.QUEUE.1 successfully
+  - THEN: Full 6/6 pipeline smoke-test → make demo
+- Open issues: 4
+  1. IBM MQ Liberty auth fix is ephemeral (lost on pod restart)
+  2. enterprise-consumer new REST API image ImagePullBackOff (Kind registry connectivity from worker nodes)
+  3. DEV.QUEUE.1 queue full — no consumer draining it
+  4. ArgoCD CLI v3/v2 mismatch (cosmetic, workaround in place)
+- Open risks: 1 — Kind cluster may stop on machine restart; IBM MQ in-pod config changes lost if pod restarts
+---

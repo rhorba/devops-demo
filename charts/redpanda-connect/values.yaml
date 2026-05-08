@@ -13,6 +13,7 @@ pipelines:
     configKey: redpanda-to-ibmmq.yaml
     tlsCertConfigMap: ibm-mq-tls-cert
     tlsCertKey: ibm-mq.crt
+    caBundleConfigMap: ibm-mq-ca-bundle
     env:
       - name: MQ_APP_PASSWORD
         valueFrom:

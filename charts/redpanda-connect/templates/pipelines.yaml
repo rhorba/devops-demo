@@ -35,6 +35,12 @@ spec:
               mountPath: /etc/tls
               readOnly: true
             {{- end }}
+            {{- if .caBundleConfigMap }}
+            - name: ca-bundle
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              subPath: ca-certificates.crt
+              readOnly: true
+            {{- end }}
           {{- if .env }}
           env:
             {{- toYaml .env | nindent 12 }}
@@ -60,5 +66,10 @@ spec:
         - name: tls-cert
           configMap:
             name: {{ .tlsCertConfigMap }}
+        {{- end }}
+        {{- if .caBundleConfigMap }}
+        - name: ca-bundle
+          configMap:
+            name: {{ .caBundleConfigMap }}
         {{- end }}
 {{- end }}
